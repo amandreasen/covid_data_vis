@@ -1,18 +1,16 @@
 import PropTypes from "prop-types";
 import { useRef } from "react";
 import Script from "react-load-script";
+import "components/LocationInput.scss";
 
-const LocationInput = ({ id, value, onChange }) => {
+const LocationInput = ({ id, value, onChange, onFindCounty }) => {
   const inputId = `autocomplete ${id}`;
   const autocompleteRef = useRef(null);
 
   const onScriptLoad = () => {
-    const options = [];
-
     //eslint-disable-next-line no-undef
     autocompleteRef.current = new google.maps.places.Autocomplete(
       document.getElementById(inputId),
-      options,
     );
 
     autocompleteRef.current.setFields([
@@ -23,7 +21,23 @@ const LocationInput = ({ id, value, onChange }) => {
     autocompleteRef.current.addListener("place_changed", onPlaceSelect);
   };
 
-  const onPlaceSelect = () => {};
+  const onPlaceSelect = () => {
+    const addressObject = autocompleteRef.current.getPlace();
+    const address = addressObject.address_components;
+
+    const county = getCounty(address);
+    if (county) {
+      onFindCounty({ id, county, address: addressObject.formatted_address });
+    }
+  };
+
+  const getCounty = (components) => {
+    const county = components.find((comp) =>
+      comp.types.includes("administrative_area_level_2"),
+    );
+
+    return county?.short_name || "";
+  };
 
   return (
     <>
@@ -33,6 +47,7 @@ const LocationInput = ({ id, value, onChange }) => {
       />
       <input
         id={inputId}
+        className="locationInput"
         type="text"
         placeholder="Start typing a U.S. location..."
         value={value}
@@ -46,6 +61,7 @@ LocationInput.propTypes = {
   id: PropTypes.number.isRequired,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  onFindCounty: PropTypes.func.isRequired,
 };
 
 export default LocationInput;

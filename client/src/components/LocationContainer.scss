@@ -1,9 +1,30 @@
-.LocationContainer {
-  background-color: green;
-  height: 40%;
+.location-container {
+  height: 35%;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.InputContainer {
-  margin-right: 8px;
+.input-container {
+  margin: 8px;
+}
+
+.add-button-container {
+  width: 10%;
+  margin: auto;
+}
+
+.data-container {
+  display: flex;
+  align-items: center;
+}
+
+.date-container {
+  display: flex;
+
+  span{
+    margin: 0px 8px;
+  }
 }

@@ -4,7 +4,7 @@ import "components/Page.scss";
 
 const Page = () => {
   return (
-    <div className="Page">
+    <div className="page">
       <h1>Covid-19 Case Data Visualization</h1>
       <LocationContainer />
       <Chart />

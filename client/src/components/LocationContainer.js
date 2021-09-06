@@ -1,14 +1,21 @@
 import { useState } from "react";
 import LocationInput from "components/LocationInput";
 import IconButton from "./IconButton";
+import Tag from "components/Tag";
+import DatePicker from "react-datepicker";
 import { faTimes, faPlus } from "@fortawesome/free-solid-svg-icons";
 import "components/LocationContainer.scss";
+import "react-datepicker/dist/react-datepicker.css";
 
-const MAX_INPUTS = 5;
+const MAX_INPUTS = 3;
 
 const LocationContainer = () => {
   const [nextInputId, setNextInputId] = useState(1);
-  const [locationInputs, setLocationInputs] = useState([{ id: 0, value: "" }]);
+  const [locationInputs, setLocationInputs] = useState([
+    { id: 0, value: "", county: "" },
+  ]);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const onChangeLocationInput = ({ event, id }) => {
     const inputs = [...locationInputs];
@@ -21,7 +28,7 @@ const LocationContainer = () => {
   };
 
   const onAddLocationInput = () => {
-    const newInput = { id: nextInputId, value: "" };
+    const newInput = { id: nextInputId, value: "", county: "" };
     const inputs = [...locationInputs, newInput];
 
     setNextInputId(nextInputId + 1);
@@ -33,30 +40,68 @@ const LocationContainer = () => {
     setLocationInputs(inputs);
   };
 
+  const onFindCounty = ({ id, county, address }) => {
+    const inputs = [...locationInputs];
+    const input = inputs.find((input) => input.id == id);
+
+    if (input) {
+      input.county = county;
+      input.value = address;
+      setLocationInputs(inputs);
+    }
+  };
+
   return (
-    <div className="LocationContainer">
-      {locationInputs.map(({ value, id }) => (
-        <div key={id}>
-          <span className="InputContainer">
-            <LocationInput
-              key={id}
-              value={value}
-              id={id}
-              onChange={onChangeLocationInput}
-            />
-          </span>
+    <div className="location-container">
+      <div>
+        <h3>Compare data for ... </h3>
+        {locationInputs.map(({ value, county, id }) => (
+          <>
+            <div className="data-container" key={id}>
+              <Tag placeholder="County">{county}</Tag>
+              <span className="input-container">
+                <LocationInput
+                  key={id}
+                  value={value}
+                  id={id}
+                  onChange={onChangeLocationInput}
+                  onFindCounty={onFindCounty}
+                />
+              </span>
+              <IconButton
+                icon={faTimes}
+                onClick={() => onRemoveLocationInput(id)}
+                disabled={locationInputs.length === 1}
+              />
+            </div>
+          </>
+        ))}
+        <div className="add-button-container">
           <IconButton
-            icon={faTimes}
-            onClick={() => onRemoveLocationInput(id)}
-            disabled={locationInputs.length === 1}
+            icon={faPlus}
+            onClick={onAddLocationInput}
+            disabled={locationInputs.length == MAX_INPUTS}
           />
         </div>
-      ))}
-      <IconButton
-        icon={faPlus}
-        onClick={onAddLocationInput}
-        disabled={locationInputs.length == MAX_INPUTS}
-      />
+      </div>
+      <div>
+        <h3>From ...</h3>
+        <div className="date-container">
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => {
+              setStartDate(date);
+            }}
+          />
+          <span> to </span>
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => {
+              setEndDate(date);
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };

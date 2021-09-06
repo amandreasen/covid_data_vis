@@ -1,4 +1,4 @@
-import 'components/Chart.scss'
+import "components/Chart.scss";
 
 const Chart = () => {
   return <div className="ChartContainer">Chart</div>;

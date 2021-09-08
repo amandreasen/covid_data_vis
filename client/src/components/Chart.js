@@ -1,286 +1,18 @@
 import "components/Chart.scss";
 import { ResponsiveLine } from "@nivo/line";
+import propTypes from "prop-types";
 
-const Chart = () => {
-  const data = [
-    {
-      id: "japan",
-      color: "hsl(157, 70%, 50%)",
-      data: [
-        {
-          x: "plane",
-          y: 175,
-        },
-        {
-          x: "helicopter",
-          y: 192,
-        },
-        {
-          x: "boat",
-          y: 199,
-        },
-        {
-          x: "train",
-          y: 285,
-        },
-        {
-          x: "subway",
-          y: 254,
-        },
-        {
-          x: "bus",
-          y: 134,
-        },
-        {
-          x: "car",
-          y: 251,
-        },
-        {
-          x: "moto",
-          y: 238,
-        },
-        {
-          x: "bicycle",
-          y: 152,
-        },
-        {
-          x: "horse",
-          y: 209,
-        },
-        {
-          x: "skateboard",
-          y: 123,
-        },
-        {
-          x: "others",
-          y: 168,
-        },
-      ],
-    },
-    {
-      id: "france",
-      color: "hsl(37, 70%, 50%)",
-      data: [
-        {
-          x: "plane",
-          y: 206,
-        },
-        {
-          x: "helicopter",
-          y: 205,
-        },
-        {
-          x: "boat",
-          y: 206,
-        },
-        {
-          x: "train",
-          y: 193,
-        },
-        {
-          x: "subway",
-          y: 168,
-        },
-        {
-          x: "bus",
-          y: 169,
-        },
-        {
-          x: "car",
-          y: 24,
-        },
-        {
-          x: "moto",
-          y: 197,
-        },
-        {
-          x: "bicycle",
-          y: 102,
-        },
-        {
-          x: "horse",
-          y: 141,
-        },
-        {
-          x: "skateboard",
-          y: 164,
-        },
-        {
-          x: "others",
-          y: 182,
-        },
-      ],
-    },
-    {
-      id: "us",
-      color: "hsl(63, 70%, 50%)",
-      data: [
-        {
-          x: "plane",
-          y: 216,
-        },
-        {
-          x: "helicopter",
-          y: 266,
-        },
-        {
-          x: "boat",
-          y: 39,
-        },
-        {
-          x: "train",
-          y: 92,
-        },
-        {
-          x: "subway",
-          y: 279,
-        },
-        {
-          x: "bus",
-          y: 45,
-        },
-        {
-          x: "car",
-          y: 44,
-        },
-        {
-          x: "moto",
-          y: 6,
-        },
-        {
-          x: "bicycle",
-          y: 152,
-        },
-        {
-          x: "horse",
-          y: 254,
-        },
-        {
-          x: "skateboard",
-          y: 234,
-        },
-        {
-          x: "others",
-          y: 288,
-        },
-      ],
-    },
-    {
-      id: "germany",
-      color: "hsl(114, 70%, 50%)",
-      data: [
-        {
-          x: "plane",
-          y: 212,
-        },
-        {
-          x: "helicopter",
-          y: 236,
-        },
-        {
-          x: "boat",
-          y: 21,
-        },
-        {
-          x: "train",
-          y: 280,
-        },
-        {
-          x: "subway",
-          y: 36,
-        },
-        {
-          x: "bus",
-          y: 282,
-        },
-        {
-          x: "car",
-          y: 42,
-        },
-        {
-          x: "moto",
-          y: 12,
-        },
-        {
-          x: "bicycle",
-          y: 92,
-        },
-        {
-          x: "horse",
-          y: 88,
-        },
-        {
-          x: "skateboard",
-          y: 27,
-        },
-        {
-          x: "others",
-          y: 251,
-        },
-      ],
-    },
-    {
-      id: "norway",
-      color: "hsl(298, 70%, 50%)",
-      data: [
-        {
-          x: "plane",
-          y: 145,
-        },
-        {
-          x: "helicopter",
-          y: 179,
-        },
-        {
-          x: "boat",
-          y: 141,
-        },
-        {
-          x: "train",
-          y: 16,
-        },
-        {
-          x: "subway",
-          y: 248,
-        },
-        {
-          x: "bus",
-          y: 244,
-        },
-        {
-          x: "car",
-          y: 152,
-        },
-        {
-          x: "moto",
-          y: 151,
-        },
-        {
-          x: "bicycle",
-          y: 175,
-        },
-        {
-          x: "horse",
-          y: 77,
-        },
-        {
-          x: "skateboard",
-          y: 188,
-        },
-        {
-          x: "others",
-          y: 53,
-        },
-      ],
-    },
-  ];
-
+const Chart = ({ data }) => {
   return (
     <div className="ChartContainer">
       <ResponsiveLine
         data={data}
-        margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-        xScale={{ type: "point" }}
+        height={600}
+        width={1400}
+        colors={(d) => d.color}
+        margin={{ top: 50, right: 160, bottom: 50, left: 60 }}
+        xScale={{ format: "%Y-%m-%d", type: "time" }}
+        xFormat="time:%Y-%m-%d"
         yScale={{
           type: "linear",
           min: "auto",
@@ -296,16 +28,18 @@ const Chart = () => {
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          legend: "transportation",
+          tickValues: 15,
+          legend: "Dates",
           legendOffset: 36,
           legendPosition: "middle",
+          format: "%m/%d/%y",
         }}
         axisLeft={{
           orient: "left",
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          legend: "count",
+          legend: "Covid-19 Cases",
           legendOffset: -40,
           legendPosition: "middle",
         }}
@@ -320,11 +54,11 @@ const Chart = () => {
             anchor: "bottom-right",
             direction: "column",
             justify: false,
-            translateX: 100,
+            translateX: 165,
             translateY: 0,
             itemsSpacing: 0,
             itemDirection: "left-to-right",
-            itemWidth: 80,
+            itemWidth: 150,
             itemHeight: 20,
             itemOpacity: 0.75,
             symbolSize: 12,
@@ -344,6 +78,14 @@ const Chart = () => {
       />
     </div>
   );
+};
+
+Chart.propTypes = {
+  data: propTypes.object,
+};
+
+Chart.defaultProps = {
+  data: [],
 };
 
 export default Chart;

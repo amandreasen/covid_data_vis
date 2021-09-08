@@ -7,4 +7,7 @@ export const getDateRange = async () => {
   return response?.data?.data;
 };
 
-export const getCountyData = () => {};
+export const getCountyData = ({ county, state }) =>
+  axios.get(`${process.env.REACT_APP_SERVER_BASEURL}/cases/county`, {
+    params: { county, state },
+  });

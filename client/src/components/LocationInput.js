@@ -5,8 +5,9 @@ import "components/LocationInput.scss";
 
 const VALID_COUNTRY = "US";
 
-const LocationInput = ({ id, value, onChange, onSelectLocation }) => {
+const LocationInput = ({ id, onSelectLocation }) => {
   const [error, setError] = useState(null);
+  const [term, setTerm] = useState("");
   const inputId = `autocomplete ${id}`;
   const autocompleteRef = useRef(null);
 
@@ -37,7 +38,12 @@ const LocationInput = ({ id, value, onChange, onSelectLocation }) => {
       return;
     }
 
-    return { id, locationData, address: addressObject.formatted_address };
+    setTerm(addressObject.formatted_address);
+
+    onSelectLocation({
+      id,
+      locationData,
+    });
   };
 
   const getLocationData = (components) =>
@@ -64,11 +70,7 @@ const LocationInput = ({ id, value, onChange, onSelectLocation }) => {
 
       return acc;
     }, {});
-  // const county = components.find((comp) =>
-  //   comp.types.includes("administrative_area_level_2"),
-  // );
 
-  // return county?.short_name || "";
   return (
     <>
       <Script
@@ -80,8 +82,8 @@ const LocationInput = ({ id, value, onChange, onSelectLocation }) => {
         className="locationInput"
         type="text"
         placeholder="Start typing a U.S. location..."
-        value={value}
-        onChange={(event) => onChange({ event, id })}
+        value={term}
+        onChange={(event) => setTerm(event.target.value)}
       />
     </>
   );
@@ -89,8 +91,6 @@ const LocationInput = ({ id, value, onChange, onSelectLocation }) => {
 
 LocationInput.propTypes = {
   id: PropTypes.number.isRequired,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
   onSelectLocation: PropTypes.func.isRequired,
 };
 

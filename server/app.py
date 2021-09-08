@@ -29,23 +29,53 @@ def query_db(query, args=()):
     cur.close()
     return rv
 
+    # serialize methods
+    # def serialize_case_data(data, col_names):
+    #     serialized_data = {"dates": {}}
 
-# serialize methods
-def serialize_case_data(data, col_names):
-    serialized_data = {"dates": {}}
+    #     for i in range(len(col_names)):
+    #         key = col_names[i][0]
+    #         date_components = key.split("-")
 
-    for i in range(len(col_names)):
-        key = col_names[i][0]
-        date_components = key.split("-")
+    #         # reformat date keys
+    #         if len(date_components) > 1:
+    #             formatted_key = (
+    #                 f"{date_components[1]}/{date_components[2]}/{date_components[0][2:]}"
+    #             )
+    #             serialized_data["dates"][formatted_key] = data[0][i]
+    #         else:
+    #             serialized_data[key] = data[0][i]
 
-        # reformat date keys
-        if len(date_components) > 1:
-            formatted_key = (
-                f"{date_components[1]}/{date_components[2]}/{date_components[0][2:]}"
-            )
-            serialized_data["dates"][formatted_key] = data[0][i]
-        else:
-            serialized_data[key] = data[0][i]
+    #     return serialized_data
+
+    # def serialize_case_data(data):
+    #     serialized_data = {"dates": {}}
+
+    #     for i in range(len(col_names)):
+    #         key = col_names[i][0]
+    #         date_components = key.split("-")
+
+    #         # reformat date keys
+    #         if len(date_components) > 1:
+    #             formatted_key = (
+    #                 f"{date_components[1]}/{date_components[2]}/{date_components[0][2:]}"
+    #             )
+    #             serialized_data["dates"][formatted_key] = data[0][i]
+    #         else:
+    #             serialized_data[key] = data[0][i]
+
+    #     return serialized_data
+
+
+def serialize_case_data(data):
+    row = data[0]
+
+    serialized_data = {
+        "countyFIPS": row[0],
+        "countyName": row[1],
+        "state": row[2],
+        "caseData": json.loads(row[3]),
+    }
 
     return serialized_data
 
@@ -80,14 +110,13 @@ def get_county_cases():
         return json.dumps({"success": False, "error": "Location not specified."}), 404
 
     data = query_db(
-        f"SELECT * FROM CovidData WHERE CountyName='{county}' AND State='{state}';"
+        f"SELECT * FROM CovidCountyData WHERE state='{state}' AND countyName='{county}';"
     )
-    col_names = query_db("SELECT c.name FROM pragma_table_info('CovidData') c;")
-    if not (data and col_names):
+    if not (data):
         return json.dumps({"success": False, "error": "No matching data found."}), 404
 
     return (
-        json.dumps({"success": True, "data": serialize_case_data(data, col_names)}),
+        json.dumps({"success": True, "data": serialize_case_data(data)}),
         200,
     )
 

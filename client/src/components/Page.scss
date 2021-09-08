@@ -9,3 +9,15 @@
   align-items: center;
   padding: 8px
 }
+
+.chart-container {
+  height: 700px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.loading-container {
+  align-self: center;
+  text-align: center;
+}

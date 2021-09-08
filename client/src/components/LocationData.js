@@ -7,31 +7,35 @@ import propTypes from "prop-types";
 const LocationData = ({
   id,
   value,
-  onChangeLocationInput,
-  onSelectLocation,
-  county,
   state,
+  county,
+  color,
+  onSelectLocation,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!state || !county) {
-      return;
+    if (isLoading) {
+      setIsLoading(false);
     }
-
-    setIsLoading(true);
-  }, [county, state]);
+  }, [state, county]);
   return (
     <>
-      <Tag placeholder="County">
-        {isLoading ? <ThreeDots /> : `${county ? `${county},` : ""} ${state}`}
+      <Tag placeholder="County" color={color}>
+        {isLoading ? (
+          <ThreeDots height="50%" />
+        ) : (
+          `${county ? `${county}, ${state}` : ""}`
+        )}
       </Tag>
       <span className="input-container">
         <LocationInput
           value={value}
           id={id}
-          onChange={onChangeLocationInput}
-          onSelectLocation={onSelectLocation}
+          onSelectLocation={({ id, locationData, state, county }) => {
+            setIsLoading(true);
+            onSelectLocation({ id, locationData, state, county });
+          }}
         />
       </span>
     </>
@@ -41,16 +45,18 @@ const LocationData = ({
 LocationData.propTypes = {
   id: propTypes.number.isRequired,
   value: propTypes.string,
-  onChangeLocationInput: propTypes.func.isRequired,
-  onSelectLocation: propTypes.func.isRequired,
-  county: propTypes.string,
   state: propTypes.string,
+  county: propTypes.string,
+  isLoading: propTypes.bool,
+  color: propTypes.string,
+  onSelectLocation: propTypes.func.isRequired,
 };
 
 LocationData.defaultProps = {
   value: "",
-  county: "",
   state: "",
+  county: "",
+  color: "#79E7BD",
 };
 
 export default LocationData;

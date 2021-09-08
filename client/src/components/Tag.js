@@ -3,9 +3,9 @@ import "components/Tag.scss";
 
 const Tag = ({ children, placeholder }) => {
   return (
-    <span className={`tag ${children ? "valued" : "empty"}`}>
+    <div className={`tag ${children ? "valued" : "empty"}`}>
       {children || placeholder}
-    </span>
+    </div>
   );
 };
 

@@ -1,9 +1,12 @@
 import PropTypes from "prop-types";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Script from "react-load-script";
 import "components/LocationInput.scss";
 
-const LocationInput = ({ id, value, onChange, onFindCounty }) => {
+const VALID_COUNTRY = "US";
+
+const LocationInput = ({ id, value, onChange, onSelectLocation }) => {
+  const [error, setError] = useState(null);
   const inputId = `autocomplete ${id}`;
   const autocompleteRef = useRef(null);
 
@@ -25,20 +28,47 @@ const LocationInput = ({ id, value, onChange, onFindCounty }) => {
     const addressObject = autocompleteRef.current.getPlace();
     const address = addressObject.address_components;
 
-    const county = getCounty(address);
-    if (county) {
-      onFindCounty({ id, county, address: addressObject.formatted_address });
+    const locationData = getLocationData(address);
+    if (locationData?.country !== VALID_COUNTRY) {
+      setError("Please select a United States location.");
+      return;
+    } else if (!locationData?.state || !locationData?.county) {
+      setError("Please select a location associated with a US county.");
+      return;
     }
+
+    return { id, locationData, address: addressObject.formatted_address };
   };
 
-  const getCounty = (components) => {
-    const county = components.find((comp) =>
-      comp.types.includes("administrative_area_level_2"),
-    );
+  const getLocationData = (components) =>
+    components.reduce((acc, comp) => {
+      const location_types = comp.types;
+      // country
+      if (location_types.includes("country")) {
+        acc["country"] = comp.short_name;
+      }
+      // state
+      else if (
+        location_types?.[0] === "administrative_area_level_1" &&
+        location_types?.[1] === "political"
+      ) {
+        acc["state"] = comp.short_name;
+      }
+      // county
+      else if (
+        location_types?.[0] === "administrative_area_level_2" &&
+        location_types?.[1] === "political"
+      ) {
+        acc["county"] = comp.short_name;
+      }
 
-    return county?.short_name || "";
-  };
+      return acc;
+    }, {});
+  // const county = components.find((comp) =>
+  //   comp.types.includes("administrative_area_level_2"),
+  // );
 
+  // return county?.short_name || "";
   return (
     <>
       <Script
@@ -61,7 +91,7 @@ LocationInput.propTypes = {
   id: PropTypes.number.isRequired,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  onFindCounty: PropTypes.func.isRequired,
+  onSelectLocation: PropTypes.func.isRequired,
 };
 
 export default LocationInput;

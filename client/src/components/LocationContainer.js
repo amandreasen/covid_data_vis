@@ -1,21 +1,66 @@
-import { useState } from "react";
-import LocationInput from "components/LocationInput";
+import { useState, useEffect } from "react";
+import LocationData from "./LocationData";
 import IconButton from "./IconButton";
-import Tag from "components/Tag";
 import DatePicker from "react-datepicker";
 import { faTimes, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { getDateRange } from "services/services";
 import "components/LocationContainer.scss";
 import "react-datepicker/dist/react-datepicker.css";
 
 const MAX_INPUTS = 3;
 
+const DateContainer = () => {
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [minDate, setMinDate] = useState(null);
+  const [maxDate, setMaxDate] = useState(null);
+
+  useEffect(async () => {
+    const dateData = await getDateRange();
+    setMinDate(new Date(dateData?.start));
+    setMaxDate(new Date(dateData?.end));
+  }, []);
+
+  const validateDateRange = (date) => {
+    const timestamp = date.getTime();
+    const minTimestamp = minDate ? minDate.getTime() : 0;
+    const maxTimestamp = maxDate ? maxDate.getTime() : new Date();
+
+    console.log(minDate?.toString());
+    console.log(maxDate?.toString());
+
+    return timestamp >= minTimestamp && timestamp <= maxTimestamp;
+  };
+
+  return (
+    <div>
+      <h3>From ...</h3>
+      <div className="date-container">
+        <DatePicker
+          selected={startDate}
+          onChange={(date) => {
+            setStartDate(date);
+          }}
+          filterDate={validateDateRange}
+        />
+        <span> to </span>
+        <DatePicker
+          selected={endDate}
+          onChange={(date) => {
+            setEndDate(date);
+          }}
+          filterDate={validateDateRange}
+        />
+      </div>
+    </div>
+  );
+};
+
 const LocationContainer = () => {
   const [nextInputId, setNextInputId] = useState(1);
   const [locationInputs, setLocationInputs] = useState([
-    { id: 0, value: "", county: "" },
+    { id: 0, value: "", county: "", state: "" },
   ]);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
 
   const onChangeLocationInput = ({ event, id }) => {
     const inputs = [...locationInputs];
@@ -28,7 +73,7 @@ const LocationContainer = () => {
   };
 
   const onAddLocationInput = () => {
-    const newInput = { id: nextInputId, value: "", county: "" };
+    const newInput = { id: nextInputId, value: "", county: "", state: "" };
     const inputs = [...locationInputs, newInput];
 
     setNextInputId(nextInputId + 1);
@@ -40,12 +85,12 @@ const LocationContainer = () => {
     setLocationInputs(inputs);
   };
 
-  const onFindCounty = ({ id, county, address }) => {
+  const onSelectLocation = ({ id, locationData, address }) => {
     const inputs = [...locationInputs];
     const input = inputs.find((input) => input.id == id);
 
     if (input) {
-      input.county = county;
+      input.county = locationData.county;
       input.value = address;
       setLocationInputs(inputs);
     }
@@ -55,19 +100,17 @@ const LocationContainer = () => {
     <div className="location-container">
       <div>
         <h3>Compare data for ... </h3>
-        {locationInputs.map(({ value, county, id }) => (
+        {locationInputs.map(({ value, county, state, id }) => (
           <>
             <div className="data-container" key={id}>
-              <Tag placeholder="County">{county}</Tag>
-              <span className="input-container">
-                <LocationInput
-                  key={id}
-                  value={value}
-                  id={id}
-                  onChange={onChangeLocationInput}
-                  onFindCounty={onFindCounty}
-                />
-              </span>
+              <LocationData
+                id={id}
+                value={value}
+                county={county}
+                state={state}
+                onChangeLocationInput={onChangeLocationInput}
+                onSelectLocation={onSelectLocation}
+              />
               <IconButton
                 icon={faTimes}
                 onClick={() => onRemoveLocationInput(id)}
@@ -84,24 +127,7 @@ const LocationContainer = () => {
           />
         </div>
       </div>
-      <div>
-        <h3>From ...</h3>
-        <div className="date-container">
-          <DatePicker
-            selected={startDate}
-            onChange={(date) => {
-              setStartDate(date);
-            }}
-          />
-          <span> to </span>
-          <DatePicker
-            selected={endDate}
-            onChange={(date) => {
-              setEndDate(date);
-            }}
-          />
-        </div>
-      </div>
+      <DateContainer />
     </div>
   );
 };

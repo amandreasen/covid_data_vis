@@ -11,7 +11,7 @@ const Chart = ({ data }) => {
         width={1400}
         colors={(d) => d.color}
         margin={{ top: 50, right: 160, bottom: 50, left: 60 }}
-        xScale={{ format: "%Y-%m-%d", type: "time" }}
+        xScale={{ format: "%Y-%m-%d", type: "time", useUTC: false }}
         xFormat="time:%Y-%m-%d"
         yScale={{
           type: "linear",
@@ -28,7 +28,7 @@ const Chart = ({ data }) => {
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 0,
-          tickValues: 15,
+          tickValues: 12,
           legend: "Dates",
           legendOffset: 36,
           legendPosition: "middle",

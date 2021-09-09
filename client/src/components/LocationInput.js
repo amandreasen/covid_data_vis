@@ -6,15 +6,20 @@ import "components/LocationInput.scss";
 const VALID_COUNTRY = "US";
 
 const LocationInput = ({ id, onSelectLocation }) => {
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
   const [term, setTerm] = useState("");
   const inputId = `autocomplete ${id}`;
   const autocompleteRef = useRef(null);
 
   const onScriptLoad = () => {
+    const options = {
+      types: ["(cities)"],
+    };
+
     //eslint-disable-next-line no-undef
     autocompleteRef.current = new google.maps.places.Autocomplete(
       document.getElementById(inputId),
+      options,
     );
 
     autocompleteRef.current.setFields([
@@ -31,10 +36,10 @@ const LocationInput = ({ id, onSelectLocation }) => {
 
     const locationData = getLocationData(address);
     if (locationData?.country !== VALID_COUNTRY) {
-      setError("Please select a United States location.");
+      // setError("Please select a United States location.");
       return;
     } else if (!locationData?.state || !locationData?.county) {
-      setError("Please select a location associated with a US county.");
+      // setError("Please select a location associated with a US county.");
       return;
     }
 
@@ -81,7 +86,7 @@ const LocationInput = ({ id, onSelectLocation }) => {
         id={inputId}
         className="locationInput"
         type="text"
-        placeholder="Start typing a U.S. location..."
+        placeholder="Start typing a U.S. city..."
         value={term}
         onChange={(event) => setTerm(event.target.value)}
       />

@@ -12,9 +12,10 @@ const LocationInput = ({ id, onSelectLocation }) => {
   const autocompleteRef = useRef(null);
 
   const onScriptLoad = () => {
-    const options = {
-      types: ["(cities)"],
-    };
+    // const options = {
+    //   types: ["(cities)"],
+    // };
+    const options = [];
 
     //eslint-disable-next-line no-undef
     autocompleteRef.current = new google.maps.places.Autocomplete(

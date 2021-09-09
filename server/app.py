@@ -29,43 +29,6 @@ def query_db(query, args=()):
     cur.close()
     return rv
 
-    # serialize methods
-    # def serialize_case_data(data, col_names):
-    #     serialized_data = {"dates": {}}
-
-    #     for i in range(len(col_names)):
-    #         key = col_names[i][0]
-    #         date_components = key.split("-")
-
-    #         # reformat date keys
-    #         if len(date_components) > 1:
-    #             formatted_key = (
-    #                 f"{date_components[1]}/{date_components[2]}/{date_components[0][2:]}"
-    #             )
-    #             serialized_data["dates"][formatted_key] = data[0][i]
-    #         else:
-    #             serialized_data[key] = data[0][i]
-
-    #     return serialized_data
-
-    # def serialize_case_data(data):
-    #     serialized_data = {"dates": {}}
-
-    #     for i in range(len(col_names)):
-    #         key = col_names[i][0]
-    #         date_components = key.split("-")
-
-    #         # reformat date keys
-    #         if len(date_components) > 1:
-    #             formatted_key = (
-    #                 f"{date_components[1]}/{date_components[2]}/{date_components[0][2:]}"
-    #             )
-    #             serialized_data["dates"][formatted_key] = data[0][i]
-    #         else:
-    #             serialized_data[key] = data[0][i]
-
-    #     return serialized_data
-
 
 def serialize_case_data(data):
     row = data[0]
